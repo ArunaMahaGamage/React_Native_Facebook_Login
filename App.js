@@ -10,6 +10,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 
+var FBLoginButton = require('./FBLoginButton');
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
@@ -22,9 +24,8 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <Text style={styles.label}>Welcome to the Facebook SDK for React Native!</Text>
+        <FBLoginButton />
       </View>
     );
   }
@@ -33,18 +34,37 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  label: {
+    fontSize: 16,
+    fontWeight: 'normal',
+    marginBottom: 48,
   },
 });
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginManager,
+} = FBSDK;
+
+// ...
+
+// Attempt a login using the Facebook login dialog,
+// asking for default permissions.
+LoginManager.logInWithReadPermissions(['public_profile']).then(
+  function(result) {
+    if (result.isCancelled) {
+      alert('Login was cancelled');
+    } else {
+      alert('Login was successful with permissions: '
+        + result.grantedPermissions.toString());
+    }
+  },
+  function(error) {
+    alert('Login failed with error: ' + error);
+  }
+);
